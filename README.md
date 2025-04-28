@@ -1,6 +1,6 @@
-# ACP2MCP Adapter
+# ACP to MCP Adapter
 
-Lightweght standalone MCP server acting as an adapter for ACP agents into the MCP ecosystem.
+Lightweight standalone MCP server acting as an adapter for ACP agents into the MCP ecosystem.
 
 ## Capablities
 
