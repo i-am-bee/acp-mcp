@@ -1,6 +1,6 @@
 [project]
 name = "acp-mcp"
-version = "0.0.3"
+version = "0.0.4"
 description = "Serve ACP agents over MCP"
 readme = "README.md"
 authors = [{ name = "IBM Corp." }]
@@ -9,6 +9,7 @@ requires-python = ">=3.11, <4.0"
 dependencies = ["acp-sdk", "mcp>=1.6.0"]
 
 [project.scripts]
+acp-mcp = "acp_mcp:cli"
 serve = "acp_mcp:cli"
 
 [build-system]
