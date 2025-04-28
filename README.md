@@ -4,8 +4,8 @@ Lightweight standalone MCP server acting as an adapter for ACP agents into the M
 
 ## Capablities
 
-- Agents as Resources
-- Agents as Tools
+- Agent descriptions as Resources
+- Agent runs as Tools
 
 ## Transports
 
