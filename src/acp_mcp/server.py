@@ -1,4 +1,3 @@
-import asyncio
 from functools import reduce
 
 from acp_sdk.client import Client
@@ -36,16 +35,3 @@ async def serve(acp_url: str) -> None:
             register_agent(agent)
 
         await server.run_stdio_async()
-
-
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        prog="mcp2acp", description="Serve ACP agents over MCP"
-    )
-    parser.add_argument("url", type=str, help="The URL of an ACP server")
-
-    args = parser.parse_args()
-
-    asyncio.run(serve(acp_url=args.url))

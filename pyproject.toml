@@ -8,6 +8,9 @@ maintainers = [{ name = "Tomas Pilar", email = "thomas7pilar@gmail.com" }]
 requires-python = ">=3.11, <4.0"
 dependencies = ["acp-sdk", "mcp>=1.6.0"]
 
+[project.scripts]
+serve = "acp_mcp:cli"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
