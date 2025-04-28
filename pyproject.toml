@@ -3,6 +3,7 @@ name = "acp-mcp"
 version = "0.0.4"
 description = "Serve ACP agents over MCP"
 readme = "README.md"
+license = "Apache-2.0"
 authors = [{ name = "IBM Corp." }]
 maintainers = [{ name = "Tomas Pilar", email = "thomas7pilar@gmail.com" }]
 requires-python = ">=3.11, <4.0"
