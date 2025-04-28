@@ -3,5 +3,11 @@ name = "acp-mcp"
 version = "0.0.1"
 description = "Serve ACP agents over MCP"
 readme = "README.md"
+authors = [{ name = "IBM Corp." }]
+maintainers = [{ name = "Tomas Pilar", email = "thomas7pilar@gmail.com" }]
 requires-python = ">=3.11, <4.0"
 dependencies = ["acp-sdk", "mcp>=1.6.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

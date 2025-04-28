@@ -7,7 +7,7 @@ from mcp.server.fastmcp import FastMCP
 
 
 async def serve(acp_url: str) -> None:
-    server = FastMCP("acp2mcp")
+    server = FastMCP("acp-mcp")
 
     async with Client(base_url=acp_url) as client:
 
@@ -41,7 +41,9 @@ async def serve(acp_url: str) -> None:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(prog="mcp2acp", description="Serve ACP agents over MCP")
+    parser = argparse.ArgumentParser(
+        prog="mcp2acp", description="Serve ACP agents over MCP"
+    )
     parser.add_argument("url", type=str, help="The URL of an ACP server")
 
     args = parser.parse_args()
