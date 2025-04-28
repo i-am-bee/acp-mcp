@@ -56,8 +56,7 @@ To connect via Claude Desktop, follow these steps:
 2. In the Settings pane, click on Developer and then select Edit Config.
 3. This will create a configuration file at the following locations:
   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-  - Windows: `%APPDATA%\Claude\claude_desktop_config.json`<br />
-If the file doesn't already exist, it will be created for you and displayed in your file system.
+  - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 4. Open the configuration file in a text editor and replace its contents with the following:
 
 ```json
