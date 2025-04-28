@@ -11,7 +11,7 @@
 
 </div>
 
-The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bridge between two AI ecosystems: **Agent Communication Protocol (ACP)** for agent-to-agent communication and **Model Context Protocol (MCP)** for connecting AI models to external tools. It allows MCP applications (like **Claude Desktop**) discover and interact with ACP agents without direct ACP implementation.
+The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bridge between two AI ecosystems: **Agent Communication Protocol (ACP)** for agent-to-agent communication and **Model Context Protocol (MCP)** for connecting AI models to external tools. It allows MCP applications (like **Claude Desktop**) to discover and interact with ACP agents as resources.
 
 ## Key Features
 
