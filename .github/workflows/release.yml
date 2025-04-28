@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   publish-pypi:
-    name: Upload release to PyPI
+    name: PyPI
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -28,6 +28,7 @@ jobs:
           packages-dir: dist/
 
   build-and-push:
+    name: GHCR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

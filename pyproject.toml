@@ -1,6 +1,6 @@
 [project]
 name = "acp-mcp"
-version = "0.0.2"
+version = "0.0.3"
 description = "Serve ACP agents over MCP"
 readme = "README.md"
 authors = [{ name = "IBM Corp." }]

@@ -8,4 +8,4 @@ COPY . .
 
 RUN uv sync
 
-CMD ["uv", "run", "python", "server.py", "${ACP_URL}"]
+CMD ["uv", "run", "serve", "${ACP_URL}"]
