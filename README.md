@@ -11,11 +11,9 @@
 
 </div>
 
-The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bridge between two AI ecosystems. The **Agent Communication Protocol (ACP)** supports agent-to-agent communication and collaboration, while the **Model Context Protocol (MCP)** connects AI models to external data sources, tools, and applications.
+The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bridge between two AI ecosystems: **Agent Communication Protocol (ACP)** for agent-to-agent communication and **Model Context Protocol (MCP)** for connecting AI models to external tools. It allows MCP applications (like **Claude Desktop**) discover and interact with ACP agents without direct ACP implementation.
 
-This adapter lets MCP-based applications, like **Claude Desktop**, discover and interact with ACP agents, without needing to implement ACP directly. It works by connecting to your ACP server, discovering available agents, registering them as MCP resources, and exposing a tool to run them.
-
-## Capabilities
+## Key Features
 
 - Makes ACP agents discoverable as MCP resources
 - Exposes ACP agent runs as MCP tools
@@ -25,14 +23,12 @@ This adapter lets MCP-based applications, like **Claude Desktop**, discover and 
 
 - Python 3.11 or higher
 - Installed Python packages: `acp-sdk`, `mcp`
-- An ACP server running _(Tip: Follow the [ACP quickstart](https://github.com/i-am-bee/acp/blob/main/README.md#quickstart) to start one easily)_
-- An MCP client application - for the quickstart we will be using [Claude Desktop](https://claude.ai/download)
+- An ACP server running (Tip: Follow the [ACP quickstart](https://github.com/i-am-bee/acp/blob/main/README.md#quickstart) to start one easily)
+- An MCP client application (we use [Claude Desktop](https://claude.ai/download) in the quickstart)
 
 ## Quickstart
 
 **1. Install the Adapter**
-
-Install using uvx:
 
 ```sh
 uvx install acp-mcp
@@ -47,17 +43,17 @@ uvx acp-mcp http://localhost:8000
 ```
 
 > [!NOTE]
-> Replace `http://localhost:8000` with your actual ACP server URL if different in steps 2 & 3.
+> Replace `http://localhost:8000` with your ACP server URL if different.
 
 **3. Connect via Claude Desktop**
 
 To connect via Claude Desktop, follow these steps:
-1. Open the Claude menu on your computer and navigate to Settings (note: this is separate from the Claude account settings).
-2. In the Settings pane, click on Developer and then select Edit Config.
-3. This will create a configuration file at the following locations:
+1. Open the Claude menu on your computer and navigate to Settings (note: this is separate from the in-app Claude account settings).
+2. Navigate to Developer > Edit Config
+3. The config file will be created here:
   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-4. Open the configuration file in a text editor and replace its contents with the following:
+4. Edit the file with the following:
 
 ```json
 {
@@ -72,17 +68,13 @@ To connect via Claude Desktop, follow these steps:
 
 **4. Restart Claude Desktop and Invoke Your ACP Agent**
 
-After restarting Claude Desktop, you can invoke your ACP agent. For example, use the "echo" agent with the following input:
+After restarting, invoke your ACP agent with:
 
 ```
 use "echo" agent with the "Good morning!" input
 ```
 
-Accept the external integration:
-
-![Image](docs/assets/external_integration.png)
-
-Observe the execution of your agent:
+Accept the integration and observe the agent running.
 
 ![Image](docs/assets/running_echo.png)
 
