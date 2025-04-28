@@ -24,7 +24,7 @@ The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bri
 - Python 3.11 or higher
 - Installed Python packages: `acp-sdk`, `mcp`
 - An ACP server running (Tip: Follow the [ACP quickstart](https://github.com/i-am-bee/acp/blob/main/README.md#quickstart) to start one easily)
-- An MCP client application (we use [Claude Desktop](https://claude.ai/download) in the quickstart)
+- An MCP client application (We use [Claude Desktop](https://claude.ai/download) in the quickstart)
 
 ## Quickstart
 
