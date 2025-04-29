@@ -3,7 +3,7 @@ requires-python = ">=3.11, <4.0"
 
 [[package]]
 name = "acp-mcp"
-version = "0.0.5"
+version = "0.0.6"
 source = { editable = "." }
 dependencies = [
     { name = "acp-sdk" },
@@ -12,13 +12,13 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "acp-sdk", specifier = ">=0.7.3" },
+    { name = "acp-sdk", specifier = ">=0.8.0" },
     { name = "mcp", specifier = ">=1.6.0" },
 ]
 
 [[package]]
 name = "acp-sdk"
-version = "0.7.3"
+version = "0.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
@@ -33,9 +33,9 @@ dependencies = [
     { name = "opentelemetry-sdk" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/fc/74c3a14e7a0eafb2a5d5f334f79033100a72e9bde47c5554566c5c47d46d/acp_sdk-0.7.3.tar.gz", hash = "sha256:9bfe609712e8e51d94b2741826ffa723ae5b6d6c5a67f0a53f237b7a390b2577", size = 21996 }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/31/008caf3acaa39fe317bdb244a2598e388d9a6391eda96bc5fad6e59e8701/acp_sdk-0.8.0.tar.gz", hash = "sha256:4b5bf10a2b0b5ca5697ac3706c15155d40abde3921cd32eb3e20779c29307d3e", size = 22528 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7b/58/1d7ed3a8848a3c73abd936267497459cbdd17bf86ee02bf9243bb3f04b8a/acp_sdk-0.7.3-py3-none-any.whl", hash = "sha256:046b53e61ed2d45a122eb3124084fd8be59ea9a101e9ad6f4dc41b06a64af4db", size = 20265 },
+    { url = "https://files.pythonhosted.org/packages/35/34/32c28813e8c910494fbbf068d413c5fc0f6e90148e082d03c254498ace07/acp_sdk-0.8.0-py3-none-any.whl", hash = "sha256:8f33ac31fefcb0a9863f22738e23fab89d5bae12cf2f21b50c022913b03fd0a7", size = 20566 },
 ]
 
 [[package]]
