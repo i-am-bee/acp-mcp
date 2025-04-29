@@ -46,4 +46,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ghcr.io/${{ github.repository }}/acp-mcp:${{ github.sha }},ghcr.io/${{ github.repository }}/acp-mcp:latest
