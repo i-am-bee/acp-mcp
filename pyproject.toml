@@ -1,6 +1,6 @@
 [project]
 name = "acp-mcp"
-version = "0.0.8"
+version = "0.0.9"
 description = "Serve ACP agents over MCP"
 readme = "README.md"
 license = "Apache-2.0"
