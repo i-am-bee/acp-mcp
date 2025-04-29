@@ -8,4 +8,4 @@ COPY . .
 
 RUN uv sync
 
-CMD ["uv", "run", "serve", "$ACP_URL"]
+ENTRYPOINT ["uv", "run", "serve"]
