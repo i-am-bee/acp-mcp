@@ -39,6 +39,16 @@ uvx acp-mcp http://localhost:8000
 > [!NOTE]
 > Replace `http://localhost:8000` with your ACP server URL if different.
 
+<details> <summary><strong>Prefer Docker?</strong></summary>
+
+```sh
+docker run -i --rm ghcr.io/i-am-bee/acp-mcp http://host.docker.internal:8000
+```
+
+**Tip:** `host.docker.internal` allows Docker containers to reach services running on the host (adjust if needed for your setup).
+
+</details> 
+
 **2. Connect via Claude Desktop**
 
 To connect via Claude Desktop, follow these steps:
@@ -59,6 +69,27 @@ To connect via Claude Desktop, follow these steps:
   }
 }
 ```
+  
+<details> <summary><strong>Prefer Docker?</strong></summary>
+  
+```json
+{
+  "mcpServers": {
+    "acp-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/i-am-bee/acp-mcp",
+        "http://host.docker.internal:8000"
+      ]
+    }
+  }
+}
+```
+
+</details>
 
 **3. Restart Claude Desktop and Invoke Your ACP Agent**
 
@@ -70,7 +101,7 @@ use "echo" agent with the "Good morning!" input
 
 Accept the integration and observe the agent running.
 
-![Image](docs/assets/running_echo.png)
+![Screenshot of Claude Desktop invoking the echo agent](docs/assets/running_echo.png)
 
 ## How It Works
 
