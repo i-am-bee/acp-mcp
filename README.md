@@ -28,13 +28,7 @@ The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bri
 
 ## Quickstart
 
-**1. Install the Adapter**
-
-```sh
-uvx install acp-mcp
-```
-
-**2. Run the Adapter**
+**1. Run the Adapter**
 
 Start the adapter and connect it to your ACP server:
 
@@ -45,7 +39,7 @@ uvx acp-mcp http://localhost:8000
 > [!NOTE]
 > Replace `http://localhost:8000` with your ACP server URL if different.
 
-**3. Connect via Claude Desktop**
+**2. Connect via Claude Desktop**
 
 To connect via Claude Desktop, follow these steps:
 1. Open the Claude menu on your computer and navigate to Settings (note: this is separate from the in-app Claude account settings).
@@ -66,7 +60,7 @@ To connect via Claude Desktop, follow these steps:
 }
 ```
 
-**4. Restart Claude Desktop and Invoke Your ACP Agent**
+**3. Restart Claude Desktop and Invoke Your ACP Agent**
 
 After restarting, invoke your ACP agent with:
 
