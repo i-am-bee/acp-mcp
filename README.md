@@ -103,6 +103,12 @@ Accept the integration and observe the agent running.
 
 ![Screenshot of Claude Desktop invoking the echo agent](docs/assets/running_echo.png)
 
+![MCP Resources](docs/assets/attach-from-mcp.png)
+
+> [!TIP]
+> ACP agents are also registered as **MCP resources** in Claude Desktop.<br />
+> To attach them manually, click the Resources icon (two plugs connecting) in the sidebar, labeled "Attach from MCP", then select an agent like `acp://agents/echo`.
+
 ## How It Works
 
 1. The adapter connects to your ACP server.
