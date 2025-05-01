@@ -15,7 +15,7 @@ The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bri
 
 ## Capabilities & Tradeoffs
 
-This adapter enables interoperability between protocols with specific benefits and tradeoffs:
+This adapter enables interoperability between ACP and MCP with specific benefits and tradeoffs:
 
 ### Benefits
 
