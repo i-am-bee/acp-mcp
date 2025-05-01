@@ -13,11 +13,25 @@
 
 The **ACP to MCP Adapter** is a lightweight standalone server that acts as a bridge between two AI ecosystems: **Agent Communication Protocol (ACP)** for agent-to-agent communication and **Model Context Protocol (MCP)** for connecting AI models to external tools. It allows MCP applications (like **Claude Desktop**) to discover and interact with ACP agents as resources.
 
-## Key Features
+## Capabilities & Tradeoffs
+
+This adapter enables interoperability between protocols with specific benefits and tradeoffs:
+
+### Benefits
 
 - Makes ACP agents discoverable as MCP resources
 - Exposes ACP agent runs as MCP tools
 - Bridges two agent ecosystems with minimal configuration
+
+### Current Limitations
+
+- ACP agents become MCP tools instead of conversational peers
+- No streaming of incremental updates
+- No shared memory across servers
+- Basic content translation between formats without support for complex data structures
+- Static agent registration at startup (lacks dynamic discovery)
+
+This adapter is best for situations where you need ACP agents in MCP environments and accept these compromises.
 
 ## Requirements
 
