@@ -1,102 +1,152 @@
 import asyncio
-import json
 import logging
 
 from acp_sdk.client import Client
-from acp_sdk.models import Agent, RunStatus, Message, SessionId, AwaitResume, RunId, Run
-from mcp.server.fastmcp import FastMCP
+from acp_sdk.models import (
+    RunStatus,
+    Message,
+    SessionId,
+    AwaitResume,
+    RunId,
+    Run,
+    AgentName,
+)
+from mcp.server import Server
+from mcp.server.stdio import stdio_server
+from mcp.server.models import InitializationOptions
+from mcp.server.lowlevel.helper_types import ReadResourceContents
+from mcp.types import (
+    Resource,
+    Tool,
+    TextContent,
+    ImageContent,
+    EmbeddedResource,
+    TextResourceContents,
+)
+from pydantic import AnyUrl, BaseModel
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("acp-mcp")
 
 
+class RunAgentInput(BaseModel):
+    agent: AgentName
+    input: Message
+    session: SessionId | None = None
+
+
+class RunAgentResumeInput(BaseModel):
+    run: RunId
+    await_resume: AwaitResume
+
+
 class Adapter:
-    def __init__(
-        self,
-        *,
-        acp_url: str,
-        refresh_interval: int = 15,
-        refresh_timeout: int = 5,
-        run_timeout: int = 300,
-    ):
+    def __init__(self, *, acp_url: str, timeout: int = 300):
         self.acp_url = acp_url
-        self.refresh_interval = refresh_interval
-        self.refresh_timeout = refresh_timeout
-        self.run_timeout = run_timeout
+        self.timeout = timeout
 
-        self._agents: dict[str, Agent] = {}
+    async def serve(self, server: Server | None = None):
+        server = server or Server("acp-mcp")
 
-    async def serve(self):
-        server = FastMCP("acp-mcp")
+        @server.list_resources()
+        async def list_resources() -> list[Resource]:
+            async with Client(base_url=self.acp_url, timeout=self.timeout) as client:
+                agents = [agent async for agent in client.agents()]
+                return [
+                    Resource(
+                        uri=self._create_agent_uri(agent.name),
+                        name=agent.name,
+                        description=agent.description,
+                    )
+                    for agent in agents
+                ]
 
-        @server.resource(
-            uri=self.acp_url + "/agents",
-            name="agents",
-            description="List of available agents",
-            mime_type="application/json",
-        )
-        @server.tool(name="list_agents", description="List available agents")
-        async def list_agents() -> str:
-            return json.dumps([agent.model_dump() for agent in self._agents.values()])
+        @server.read_resource()
+        async def read_resource(uri: AnyUrl) -> list[ReadResourceContents]:
+            agent = self._parse_agent_from_uri(uri)
+            if agent is None:
+                raise ValueError("Invalid resource")
+            async with Client(base_url=self.acp_url, timeout=self.timeout) as client:
+                agent = await client.agent(name=agent)
+                return [
+                    ReadResourceContents(
+                        mime_type="application/json",
+                        content=agent.model_dump_json(),
+                    )
+                ]
 
-        @server.resource(
-            uri=self.acp_url + "/agents/{agent}",
-            name="agent",
-            description="Information about an agent",
-            mime_type="application/json",
-        )
-        @server.tool(name="get_agent", description="Get information about an agent")
-        async def agent(agent: str) -> str:
-            return self._find_agent(agent).model_dump_json()
+        @server.list_tools()
+        async def list_tools() -> list[Tool]:
+            return [
+                Tool(
+                    name="list_agents",
+                    description="Lists available agents",
+                    inputSchema={},
+                ),
+                Tool(
+                    name="run_agent",
+                    description="Runs an agent",
+                    inputSchema=RunAgentInput.model_json_schema(),
+                ),
+                Tool(
+                    name="resume_run_agent",
+                    description="Resumes an agent run",
+                    inputSchema=RunAgentResumeInput.model_json_schema(),
+                ),
+            ]
 
-        @server.tool(name="run_agent", description="Runs an agent with given input")
-        async def run(agent: str, input: Message, session: SessionId | None = None):
-            async with (
-                Client(base_url=self.acp_url, timeout=self.run_timeout) as client,
-                client.session(session_id=session) as ses,
-            ):
-                run = await ses.run_sync(input, agent=self._find_agent(agent).name)
-            return self._run_to_tool_response(run)
+        @server.call_tool()
+        async def handle_call_tool(
+            name: str, arguments: dict | None
+        ) -> list[TextContent | ImageContent | EmbeddedResource]:
+            async with Client(base_url=self.acp_url, timeout=self.timeout) as client:
+                match name:
+                    case "list_agents":
+                        return [
+                            EmbeddedResource(
+                                type="resource",
+                                resource=TextResourceContents(
+                                    uri=self._create_agent_uri(agent.name),
+                                    mimeType="application/json",
+                                    text=agent.model_dump_json(),
+                                ),
+                            )
+                            async for agent in client.agents()
+                        ]
+                    case "run_agent":
+                        input = RunAgentInput.model_validate(arguments)
+                        async with client.session(session_id=input.session) as session:
+                            run = await session.run_sync(input, agent=input.agent)
+                            return self._run_to_tool_response(run)
+                    case "resume_run_agent":
+                        input = RunAgentResumeInput.model_validate(arguments)
+                        run = await client.run_resume_sync(
+                            input.await_resume,
+                            run_id=input.run,
+                        )
+                        return self._run_to_tool_response(run)
+                    case _:
+                        raise ValueError("Invalid tool name")
 
-        @server.tool(
-            name="resume_run",
-            description="Resumes an awaiting agent run",
-        )
-        async def resume_run(await_resume: AwaitResume, run_id: RunId):
-            async with Client(
-                base_url=self.acp_url, timeout=self.run_timeout
-            ) as client:
-                run = await client.run_resume_sync(await_resume, run_id=run_id)
-            return self._run_to_tool_response(run)
+        async with stdio_server() as (read, write):
+            await server.run(
+                read,
+                write,
+                initialization_options=InitializationOptions(
+                    server_name=server.name,
+                    server_version=server.version,
+                    capabilities=server.get_capabilities(),
+                ),
+            )
 
-        refresh = asyncio.create_task(self._refresh_loop())
-        try:
-            await server.run_stdio_async()
-        finally:
-            refresh.cancel()
-            await refresh
+    def _create_agent_uri(self, agent: AgentName):
+        return f"{self.acp_url}/agents/{agent}"
 
-    def _find_agent(self, agent: str):
-        if agent not in self._agents:
-            raise RuntimeError("Agent not found")
-        return self._agents[agent]
-
-    async def _refresh(self):
-        async with Client(
-            base_url=self.acp_url, timeout=self.refresh_timeout
-        ) as client:
-            self._agents = {agent.name: agent async for agent in client.agents()}
-
-    async def _refresh_loop(self):
-        while True:
-            try:
-                await self._refresh()
-                logger.info("Agents refreshed")
-            except asyncio.CancelledError:
-                break
-            except Exception:
-                logger.exception("Agents refresh failed")
-            await asyncio.sleep(self.refresh_interval)
+    def _parse_agent_from_uri(self, uri: AnyUrl) -> AgentName | None:
+        path_segments = uri.path.split("/")
+        if len(path_segments) < 3 or path_segments[1] != "agents":
+            return None
+        return path_segments[2]
 
     def _run_to_tool_response(self, run: Run):
         "Encodes run into tool response"

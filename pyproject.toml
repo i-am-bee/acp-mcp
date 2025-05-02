@@ -1,6 +1,6 @@
 [project]
 name = "acp-mcp"
-version = "0.2.0"
+version = "0.3.0"
 description = "Serve ACP agents over MCP"
 readme = "README.md"
 license = "Apache-2.0"
@@ -16,3 +16,6 @@ serve = "acp_mcp:cli"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8.3.5", "pytest-asyncio>=0.26.0"]

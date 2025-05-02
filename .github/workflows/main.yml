@@ -1,0 +1,54 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.12"
+      - name: Install dependencies
+        run: uv sync --all-extras
+      - name: Code Lint
+        run: uv run ruff check
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.12"
+      - name: Install dependencies
+        run: uv sync --all-extras
+      - name: Code Format
+        run: uv run ruff format --check
+  e2e:
+    timeout-minutes: 5
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.12"
+      - name: Install dependencies
+        run: uv sync --all-extras
+      - name: Run E2E Tests
+        run: uv run pytest tests/e2e
