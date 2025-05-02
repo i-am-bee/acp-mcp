@@ -3,7 +3,6 @@ from collections.abc import AsyncIterator
 from threading import Thread
 
 import pytest
-import pytest_asyncio
 from acp_sdk.models import (
     Message,
 )
