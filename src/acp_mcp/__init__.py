@@ -1,5 +1,5 @@
 import asyncio
-from acp_mcp.server import serve
+from acp_mcp.adapter import Adapter
 
 
 def cli():
@@ -12,7 +12,8 @@ def cli():
 
     args = parser.parse_args()
 
-    asyncio.run(serve(acp_url=args.url))
+    adapter = Adapter(acp_url=args.url)
+    asyncio.run(adapter.serve())
 
 
 if __name__ == "__main__":
