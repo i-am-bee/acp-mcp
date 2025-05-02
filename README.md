@@ -21,7 +21,7 @@ This adapter enables interoperability between ACP and MCP with specific benefits
 
 - Makes ACP agents discoverable as MCP resources
 - Exposes ACP agent runs as MCP tools
-- Bridges two agent ecosystems with minimal configuration
+- Bridges two ecosystems with minimal configuration
 
 ### Current Limitations
 
