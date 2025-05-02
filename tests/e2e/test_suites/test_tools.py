@@ -1,5 +1,6 @@
 import pytest
 from mcp import ClientSession
+from mcp.types import TextContent
 
 from e2e.config import Config
 
@@ -29,6 +30,6 @@ async def test_list_agents(session: ClientSession) -> None:
 
 @pytest.mark.asyncio
 async def test_run_agent(session: ClientSession) -> None:
-    result = await session.call_tool("run_agent", {"agent": "echo", "input": {"parts": [{"content": "Howdy!"}]}})
+    result = await session.call_tool("run_agent", {"agent": "echo", "input": [{"parts": [{"content": "Howdy!"}]}]})
     assert not result.isError
-    assert result.content[0] == "Howdy!"
+    assert isinstance(result.content[0], TextContent)

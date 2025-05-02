@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from acp_sdk import __version__
 from acp_sdk.client import Client
 from acp_sdk.models import (
     AgentName,
@@ -12,6 +13,7 @@ from acp_sdk.models import (
     SessionId,
 )
 from mcp.server import Server
+from mcp.server.lowlevel import NotificationOptions
 from mcp.server.lowlevel.helper_types import ReadResourceContents
 from mcp.server.models import InitializationOptions
 from mcp.server.stdio import stdio_server
@@ -23,7 +25,7 @@ from mcp.types import (
     TextResourceContents,
     Tool,
 )
-from pydantic import AnyUrl, BaseModel
+from pydantic import AnyUrl, BaseModel, TypeAdapter
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("acp-mcp")
@@ -31,7 +33,7 @@ logger = logging.getLogger("acp-mcp")
 
 class RunAgentInput(BaseModel):
     agent: AgentName
-    input: Message
+    input: list[Message]
     session: SessionId | None = None
 
 
@@ -46,7 +48,7 @@ class Adapter:
         self.timeout = timeout
 
     async def serve(self, server: Server | None = None) -> None:
-        server = server or Server("acp-mcp")
+        server = server or Server("acp-mcp", version=__version__)
 
         @server.list_resources()
         async def list_resources() -> list[Resource]:
@@ -116,15 +118,15 @@ class Adapter:
                     case "run_agent":
                         input = RunAgentInput.model_validate(arguments)
                         async with client.session(session_id=input.session) as session:
-                            run = await session.run_sync(input, agent=input.agent)
-                            return self._run_to_tool_response(run)
+                            run = await session.run_sync(input.input, agent=input.agent)
+                            return [TextContent(type="text", text=self._run_to_tool_text(run))]
                     case "resume_run_agent":
                         input = RunAgentResumeInput.model_validate(arguments)
                         run = await client.run_resume_sync(
                             input.await_resume,
                             run_id=input.run,
                         )
-                        return self._run_to_tool_response(run)
+                        return [TextContent(type="text", text=self._run_to_tool_text(run))]
                     case _:
                         raise ValueError("Invalid tool name")
 
@@ -135,7 +137,9 @@ class Adapter:
                 initialization_options=InitializationOptions(
                     server_name=server.name,
                     server_version=server.version,
-                    capabilities=server.get_capabilities(),
+                    capabilities=server.get_capabilities(
+                        notification_options=NotificationOptions(), experimental_capabilities={}
+                    ),
                 ),
             )
 
@@ -148,13 +152,13 @@ class Adapter:
             return None
         return path_segments[2]
 
-    def _run_to_tool_response(self, run: Run):
+    def _run_to_tool_text(self, run: Run) -> str:
         "Encodes run into tool response"
         match run.status:
             case RunStatus.AWAITING:
-                return (f"Run {run.run_id} awaits:", run.await_request)
+                return f"Run {run.run_id} awaits: {run.await_request.model_dump_json()}"
             case RunStatus.COMPLETED:
-                return run.output
+                return TypeAdapter(list[Message]).dump_json(run.output)
             case RunStatus.CANCELLED:
                 raise asyncio.CancelledError("Agent run cancelled")
             case RunStatus.FAILED:
