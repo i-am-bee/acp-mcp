@@ -18,30 +18,30 @@ from e2e.config import Config
 
 @pytest_asyncio.fixture
 async def session() -> AsyncIterator[ClientSession]:
-    server = ACPServer()
+    acp_server = ACPServer()
 
-    @server.agent()
+    @acp_server.agent()
     async def echo(input: list[Message], context: Context) -> AsyncIterator[Message]:
         "Echoes everything"
         for message in input:
             yield message
 
-    @server.agent()
+    @acp_server.agent()
     async def slow_echo(input: list[Message], context: Context) -> AsyncIterator[Message]:
         "Echoes everything but slowly"
         for message in input:
             await asyncio.sleep(1)
             yield message
 
-    thread = Thread(target=server.run, kwargs={"port": Config.PORT}, daemon=True)
+    thread = Thread(target=acp_server.run, kwargs={"port": Config.PORT}, daemon=True)
     thread.start()
 
     await asyncio.sleep(1)
 
     server = Server("test", "0.0.0")
+    Adapter(acp_url=f"http://localhost:{Config.PORT}").register(server=server)
     async with create_connected_server_and_client_session(server=server) as session:
-        Adapter(acp_url=f"http://localhost:{Config.PORT}").register(server=server)
         yield session
 
-    server.should_exit = True
+    acp_server.should_exit = True
     thread.join(timeout=2)

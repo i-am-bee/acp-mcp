@@ -27,7 +27,7 @@ from mcp.types import (
 )
 from pydantic import AnyUrl, BaseModel, TypeAdapter
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("acp-mcp")
 
 
@@ -42,19 +42,24 @@ class RunAgentResumeInput(BaseModel):
     await_resume: AwaitResume
 
 
+class EmptySchema(BaseModel):
+    pass
+
+
 class Adapter:
-    def __init__(self, *, acp_url: str, timeout: int = 300) -> None:
+    def __init__(self, *, acp_url: str, timeout: int = 5) -> None:
         self.acp_url = acp_url
         self.timeout = timeout
 
     async def serve(self) -> None:
         server = Server("acp-mcp", version=__version__)
         self.register(server)
-        async with stdio_server() as (read, write):
+        async with stdio_server() as (read_stream, write_stream):
+            logger.info("Running server")
             await server.run(
-                read,
-                write,
-                initialization_options=InitializationOptions(
+                read_stream,
+                write_stream,
+                InitializationOptions(
                     server_name=server.name,
                     server_version=server.version,
                     capabilities=server.get_capabilities(
@@ -97,7 +102,7 @@ class Adapter:
                 Tool(
                     name="list_agents",
                     description="Lists available agents",
-                    inputSchema={},
+                    inputSchema=EmptySchema.model_json_schema(),
                 ),
                 Tool(
                     name="run_agent",
