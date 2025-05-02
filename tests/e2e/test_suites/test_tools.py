@@ -10,7 +10,7 @@ mock_agents = [
 ]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_list_tools(session: ClientSession) -> None:
     expected_tool_names = ["list_agents", "run_agent", "resume_run_agent"]
 
@@ -21,14 +21,14 @@ async def test_list_tools(session: ClientSession) -> None:
         assert name in tool_names
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_list_agents(session: ClientSession) -> None:
     result = await session.call_tool("list_agents")
     assert not result.isError
     assert len(result.content) == len(mock_agents)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_run_agent(session: ClientSession) -> None:
     result = await session.call_tool("run_agent", {"agent": "echo", "input": [{"parts": [{"content": "Howdy!"}]}]})
     assert not result.isError

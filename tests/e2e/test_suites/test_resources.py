@@ -9,7 +9,7 @@ mock_agents = [
 ]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_list_agents(session: ClientSession) -> None:
     result = await session.list_resources()
     resource_uris = [str(resource.uri) for resource in result.resources]
@@ -18,7 +18,7 @@ async def test_list_agents(session: ClientSession) -> None:
         assert agent in resource_uris
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 @pytest.mark.parametrize(
     "agent",
     mock_agents,

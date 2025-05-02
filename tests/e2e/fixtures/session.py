@@ -2,6 +2,7 @@ import asyncio
 from collections.abc import AsyncIterator
 from threading import Thread
 
+import pytest
 import pytest_asyncio
 from acp_sdk.models import (
     Message,
@@ -16,7 +17,7 @@ from acp_mcp.adapter import Adapter
 from e2e.config import Config
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def session() -> AsyncIterator[ClientSession]:
     acp_server = ACPServer()
 
