@@ -38,7 +38,7 @@ async def session() -> AsyncIterator[ClientSession]:
 
     await asyncio.sleep(1)
 
-    server = Server("test")
+    server = Server("test", "0.0.0")
     async with create_connected_server_and_client_session(server=server) as session:
         adapter_task = asyncio.create_task(Adapter(acp_url=f"http://localhost:{Config.PORT}").serve(server=server))
         await asyncio.sleep(1)
