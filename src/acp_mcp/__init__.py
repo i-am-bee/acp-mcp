@@ -1,13 +1,12 @@
 import asyncio
+
 from acp_mcp.adapter import Adapter
 
 
-def cli():
+def cli() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(
-        prog="mcp2acp", description="Serve ACP agents over MCP"
-    )
+    parser = argparse.ArgumentParser(prog="mcp2acp", description="Serve ACP agents over MCP")
     parser.add_argument("url", type=str, help="The URL of an ACP server")
 
     args = parser.parse_args()

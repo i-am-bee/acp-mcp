@@ -3,25 +3,25 @@ import logging
 
 from acp_sdk.client import Client
 from acp_sdk.models import (
-    RunStatus,
-    Message,
-    SessionId,
-    AwaitResume,
-    RunId,
-    Run,
     AgentName,
+    AwaitResume,
+    Message,
+    Run,
+    RunId,
+    RunStatus,
+    SessionId,
 )
 from mcp.server import Server
-from mcp.server.stdio import stdio_server
-from mcp.server.models import InitializationOptions
 from mcp.server.lowlevel.helper_types import ReadResourceContents
+from mcp.server.models import InitializationOptions
+from mcp.server.stdio import stdio_server
 from mcp.types import (
-    Resource,
-    Tool,
-    TextContent,
-    ImageContent,
     EmbeddedResource,
+    ImageContent,
+    Resource,
+    TextContent,
     TextResourceContents,
+    Tool,
 )
 from pydantic import AnyUrl, BaseModel
 
@@ -41,11 +41,11 @@ class RunAgentResumeInput(BaseModel):
 
 
 class Adapter:
-    def __init__(self, *, acp_url: str, timeout: int = 300):
+    def __init__(self, *, acp_url: str, timeout: int = 300) -> None:
         self.acp_url = acp_url
         self.timeout = timeout
 
-    async def serve(self, server: Server | None = None):
+    async def serve(self, server: Server | None = None) -> None:
         server = server or Server("acp-mcp")
 
         @server.list_resources()

@@ -17,5 +17,36 @@ serve = "acp_mcp:cli"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.ruff]
+lint.select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "UP",    # pyupgrade
+    "I",     # isort
+    "B",     # bugbear
+    "ANN",   # annotations
+    "N",     # pep8-naming
+    "C4",    # Comprehensions
+    "DTZ",   # DatetimeZ
+    "Q",     # Quotes
+    "SIM",   # Simplify
+    "RUF",   # Ruff
+    "TID",   # tidy-imports
+    "ASYNC", # async
+]
+lint.ignore = ["ANN401", "B904", "ANN202"]
+lint.fixable = ["ALL"]
+lint.unfixable = []
+force-exclude = true
+line-length = 120
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-tidy-imports]
+# Disallow all relative imports, "parents" | "all"
+ban-relative-imports = "all"
+
 [dependency-groups]
-dev = ["pytest>=8.3.5", "pytest-asyncio>=0.26.0"]
+dev = ["pytest>=8.3.5", "pytest-asyncio>=0.26.0", "ruff>=0.11.8"]

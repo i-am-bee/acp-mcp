@@ -1,5 +1,5 @@
-from mcp import ClientSession
 import pytest
+from mcp import ClientSession
 
 from e2e.config import Config
 

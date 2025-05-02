@@ -1,18 +1,18 @@
 import asyncio
-
 from collections.abc import AsyncIterator
 from threading import Thread
 
-from mcp import ClientSession
 import pytest_asyncio
-
-from acp_mcp.adapter import Adapter
 from acp_sdk.models import (
     Message,
 )
-from acp_sdk.server import Context, Server as ACPServer
-from mcp.shared.memory import create_connected_server_and_client_session
+from acp_sdk.server import Context
+from acp_sdk.server import Server as ACPServer
+from mcp import ClientSession
 from mcp.server import Server
+from mcp.shared.memory import create_connected_server_and_client_session
+
+from acp_mcp.adapter import Adapter
 from e2e.config import Config
 
 
@@ -27,9 +27,7 @@ async def session() -> AsyncIterator[ClientSession]:
             yield message
 
     @server.agent()
-    async def slow_echo(
-        input: list[Message], context: Context
-    ) -> AsyncIterator[Message]:
+    async def slow_echo(input: list[Message], context: Context) -> AsyncIterator[Message]:
         "Echoes everything but slowly"
         for message in input:
             await asyncio.sleep(1)
@@ -42,9 +40,7 @@ async def session() -> AsyncIterator[ClientSession]:
 
     server = Server("test")
     async with create_connected_server_and_client_session(server=server) as session:
-        adapter_task = asyncio.create_task(
-            Adapter(acp_url=f"http://localhost:{Config.PORT}").serve(server=server)
-        )
+        adapter_task = asyncio.create_task(Adapter(acp_url=f"http://localhost:{Config.PORT}").serve(server=server))
         await asyncio.sleep(1)
         yield session
         adapter_task.cancel()
