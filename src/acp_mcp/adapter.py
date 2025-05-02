@@ -47,9 +47,23 @@ class Adapter:
         self.acp_url = acp_url
         self.timeout = timeout
 
-    async def serve(self, server: Server | None = None) -> None:
-        server = server or Server("acp-mcp", version=__version__)
+    async def serve(self) -> None:
+        server = Server("acp-mcp", version=__version__)
+        self.register(server)
+        async with stdio_server() as (read, write):
+            await server.run(
+                read,
+                write,
+                initialization_options=InitializationOptions(
+                    server_name=server.name,
+                    server_version=server.version,
+                    capabilities=server.get_capabilities(
+                        notification_options=NotificationOptions(), experimental_capabilities={}
+                    ),
+                ),
+            )
 
+    def register(self, server: Server) -> None:
         @server.list_resources()
         async def list_resources() -> list[Resource]:
             async with Client(base_url=self.acp_url, timeout=self.timeout) as client:
@@ -129,19 +143,6 @@ class Adapter:
                         return [TextContent(type="text", text=self._run_to_tool_text(run))]
                     case _:
                         raise ValueError("Invalid tool name")
-
-        async with stdio_server() as (read, write):
-            await server.run(
-                read,
-                write,
-                initialization_options=InitializationOptions(
-                    server_name=server.name,
-                    server_version=server.version,
-                    capabilities=server.get_capabilities(
-                        notification_options=NotificationOptions(), experimental_capabilities={}
-                    ),
-                ),
-            )
 
     def _create_agent_uri(self, agent: AgentName):
         return f"{self.acp_url}/agents/{agent}"
