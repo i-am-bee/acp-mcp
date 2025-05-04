@@ -9,10 +9,10 @@ from acp_sdk.models import (
 from acp_sdk.server import Context
 from acp_sdk.server import Server as ACPServer
 from mcp import ClientSession
-from mcp.server import Server
 from mcp.shared.memory import create_connected_server_and_client_session
+from pydantic import AnyHttpUrl
 
-from acp_mcp.adapter import Adapter
+from acp_mcp.adapter import create_adapter
 from e2e.config import Config
 
 
@@ -38,8 +38,7 @@ async def session() -> AsyncIterator[ClientSession]:
 
     await asyncio.sleep(1)
 
-    server = Server("test", "0.0.0")
-    Adapter(acp_url=f"http://localhost:{Config.PORT}").register(server=server)
+    server = create_adapter(AnyHttpUrl(f"http://localhost:{Config.PORT}"))
     async with create_connected_server_and_client_session(server=server) as session:
         yield session
 
