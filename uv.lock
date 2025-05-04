@@ -3,7 +3,7 @@ requires-python = ">=3.11, <4.0"
 
 [[package]]
 name = "acp-mcp"
-version = "1.0.0"
+version = "1.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "acp-sdk" },
