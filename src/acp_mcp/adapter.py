@@ -4,7 +4,6 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from importlib.metadata import version
-from typing import Literal
 
 from acp_sdk.client import Client
 from acp_sdk.models import (
@@ -17,10 +16,7 @@ from acp_sdk.models import (
     SessionId,
 )
 from mcp.server import Server
-from mcp.server.lowlevel import NotificationOptions
 from mcp.server.lowlevel.helper_types import ReadResourceContents
-from mcp.server.models import InitializationOptions
-from mcp.server.stdio import stdio_server
 from mcp.types import (
     EmbeddedResource,
     ImageContent,
@@ -148,25 +144,6 @@ def create_adapter(acp_url: AnyHttpUrl, timeout: int = 5) -> Server:
                 raise ValueError("Invalid tool name")
 
     return server
-
-
-async def serve(server: Server, transport: Literal["stdio"] = "stdio") -> None:
-    match transport:
-        case "stdio":
-            async with stdio_server() as (read_stream, write_stream):
-                await server.run(
-                    read_stream,
-                    write_stream,
-                    InitializationOptions(
-                        server_name=server.name,
-                        server_version=server.version,
-                        capabilities=server.get_capabilities(
-                            notification_options=NotificationOptions(), experimental_capabilities={}
-                        ),
-                    ),
-                )
-        case _:
-            raise TypeError("transport")
 
 
 def _create_agent_uri(base_url: AnyHttpUrl, agent: AgentName) -> AnyHttpUrl:

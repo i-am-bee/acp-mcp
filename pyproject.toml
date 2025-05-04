@@ -10,8 +10,8 @@ requires-python = ">=3.11, <4.0"
 dependencies = ["acp-sdk>=0.8.4", "mcp>=1.6.0"]
 
 [project.scripts]
-acp-mcp = "acp_mcp:cli"
-serve = "acp_mcp:cli"
+acp-mcp = "acp_mcp:main"
+serve = "acp_mcp:main"
 
 [build-system]
 requires = ["hatchling"]

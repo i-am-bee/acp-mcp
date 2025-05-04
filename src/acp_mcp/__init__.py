@@ -1,15 +1,36 @@
 import asyncio
 import logging
 
+from mcp import stdio_server
+from mcp.server.lowlevel import NotificationOptions
+from mcp.server.models import InitializationOptions
 from pydantic import AnyHttpUrl
 
-from acp_mcp.adapter import create_adapter, serve
+from acp_mcp.adapter import create_adapter
+
+logger = logging.getLogger(__name__)
 
 
-def cli() -> None:
+async def serve(acp_url: AnyHttpUrl, default_timeout: int) -> None:
+    server = create_adapter(acp_url=acp_url, timeout=default_timeout)
+    async with stdio_server() as (read_stream, write_stream):
+        await server.run(
+            read_stream,
+            write_stream,
+            InitializationOptions(
+                server_name=server.name,
+                server_version=server.version,
+                capabilities=server.get_capabilities(
+                    notification_options=NotificationOptions(), experimental_capabilities={}
+                ),
+            ),
+        )
+
+
+def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(prog="mcp2acp", description="Serve ACP agents over MCP")
+    parser = argparse.ArgumentParser(prog="acp-mcp", description="Serve ACP agents over MCP")
     parser.add_argument("url", type=AnyHttpUrl, help="The URL of an ACP server")
     parser.add_argument(
         "--log-level",
@@ -27,9 +48,9 @@ def cli() -> None:
     args = parser.parse_args()
 
     logging.basicConfig(level=args.log_level, format="%(asctime)s - %(levelname)s - %(message)s")
-    server = create_adapter(acp_url=args.url, timeout=args.timeout)
-    asyncio.run(serve(server, "stdio"))
+
+    asyncio.run(serve(acp_url=args.url, default_timeout=args.timeout))
 
 
 if __name__ == "__main__":
-    cli()
+    main()
