@@ -161,7 +161,7 @@ def _create_agent_uri(base_url: AnyHttpUrl, agent: AgentName) -> AnyHttpUrl:
 
 def _parse_agent_from_url(url: AnyUrl) -> AgentName | None:
     path_segments = url.path.split("/")
-    if len(path_segments) < 3 or path_segments[1] != "agents":
+    if len(path_segments) < 3 or path_segments[1] != "agents" or len(path_segments[2]) == 0:
         return None
     return path_segments[2]
 
@@ -172,7 +172,7 @@ def _run_to_tool_text(run: Run) -> str:
         case RunStatus.AWAITING:
             return f"Run {run.run_id} awaits: {run.await_request.model_dump_json()}"
         case RunStatus.COMPLETED:
-            return TypeAdapter(list[Message]).dump_json(run.output)
+            return TypeAdapter(list[Message]).dump_json(run.output).decode()
         case RunStatus.CANCELLED:
             raise asyncio.CancelledError("Agent run cancelled")
         case RunStatus.FAILED:
