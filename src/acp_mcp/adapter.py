@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import traceback
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -50,12 +51,12 @@ class Context:
     client: Client
 
 
-def create_adapter(acp_url: AnyHttpUrl, timeout: int = 5) -> Server:
+def create_adapter(acp_url: AnyHttpUrl) -> Server:
     @asynccontextmanager
     async def lifespan(server: Server) -> AsyncIterator[Context]:
         logger.info("Running server")
         try:
-            async with Client(base_url=str(acp_url), timeout=timeout) as client:
+            async with Client(base_url=str(acp_url)) as client:
                 yield Context(client=client)
         finally:
             logger.info("Server shutdown")
@@ -129,10 +130,14 @@ def create_adapter(acp_url: AnyHttpUrl, timeout: int = 5) -> Server:
                     async for agent in client.agents()
                 ]
             case "run_agent":
-                input = RunAgentInput.model_validate(arguments)
-                async with client.session(session_id=input.session) as session:
-                    run = await session.run_sync(input.input, agent=input.agent)
-                    return [TextContent(type="text", text=_run_to_tool_text(run))]
+                try:
+                    input = RunAgentInput.model_validate(arguments)
+                    async with client.session(session_id=input.session) as session:
+                        run = await session.run_sync(input.input, agent=input.agent)
+                        return [TextContent(type="text", text=_run_to_tool_text(run))]
+                except Exception as e:
+                    logger.warning(f"BASE: {client.client.base_url}")
+                    logger.warning(f"Caught an exception: {e}\n{traceback.format_exc()}")
             case "resume_run_agent":
                 input = RunAgentResumeInput.model_validate(arguments)
                 run = await client.run_resume_sync(

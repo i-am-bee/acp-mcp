@@ -11,8 +11,8 @@ from acp_mcp.adapter import create_adapter
 logger = logging.getLogger(__name__)
 
 
-async def serve(acp_url: AnyHttpUrl, default_timeout: int) -> None:
-    server = create_adapter(acp_url=acp_url, timeout=default_timeout)
+async def serve(acp_url: AnyHttpUrl) -> None:
+    server = create_adapter(acp_url=acp_url)
     async with stdio_server() as (read_stream, write_stream):
         await server.run(
             read_stream,
@@ -38,18 +38,12 @@ def main() -> None:
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         help="Set the logging level",
     )
-    parser.add_argument(
-        "--timeout",
-        type=int,
-        default=5,
-        help="Timeout for the ACP client, in seconds",
-    )
 
     args = parser.parse_args()
 
     logging.basicConfig(level=args.log_level, format="%(asctime)s - %(levelname)s - %(message)s")
 
-    asyncio.run(serve(acp_url=args.url, default_timeout=args.timeout))
+    asyncio.run(serve(acp_url=args.url))
 
 
 if __name__ == "__main__":
