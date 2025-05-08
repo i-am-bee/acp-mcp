@@ -10,7 +10,11 @@ from acp_mcp.adapter import _create_agent_uri, _parse_agent_from_url
     [
         (AnyHttpUrl("http://localhost:8000"), "foobar", AnyHttpUrl("http://localhost:8000/agents/foobar")),
         (AnyHttpUrl("http://localhost:8000/"), "foobar", AnyHttpUrl("http://localhost:8000/agents/foobar")),
-        (AnyHttpUrl("https://localhost:8000"), "foobar", AnyHttpUrl("https://localhost:8000/agents/foobar")),
+        (
+            AnyHttpUrl("https://localhost:8000/v1/acp"),
+            "foobar",
+            AnyHttpUrl("https://localhost:8000/v1/acp/agents/foobar"),
+        ),
     ],
 )
 def test_create_agent_uri(base: AnyHttpUrl, agent: AgentName, expected: AnyHttpUrl) -> None:

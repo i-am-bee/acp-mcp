@@ -153,7 +153,7 @@ def _create_agent_uri(base_url: AnyHttpUrl, agent: AgentName) -> AnyHttpUrl:
         password=base_url.password,
         host=base_url.host,
         port=base_url.port,
-        path=(base_url.path + f"agents/{agent}").lstrip("/"),
+        path=(base_url.path.rstrip("/") + f"/agents/{agent}").lstrip("/"),
         query=base_url.query,
         fragment=base_url.fragment,
     )
