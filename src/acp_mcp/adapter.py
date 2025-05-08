@@ -161,9 +161,9 @@ def _create_agent_uri(base_url: AnyHttpUrl, agent: AgentName) -> AnyHttpUrl:
 
 def _parse_agent_from_url(url: AnyUrl) -> AgentName | None:
     path_segments = url.path.split("/")
-    if len(path_segments) < 3 or path_segments[1] != "agents" or len(path_segments[2]) == 0:
+    if len(path_segments) < 3 or path_segments[-2] != "agents" or len(path_segments[-1]) == 0:
         return None
-    return path_segments[2]
+    return path_segments[-1]
 
 
 def _run_to_tool_text(run: Run) -> str:
