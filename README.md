@@ -29,7 +29,6 @@ This adapter enables interoperability between ACP and MCP with specific benefits
 - No streaming of incremental updates
 - No shared memory across servers
 - Basic content translation between formats without support for complex data structures
-- Static agent registration at startup (lacks dynamic discovery)
 
 This adapter is best for situations where you need ACP agents in MCP environments and accept these compromises.
 
